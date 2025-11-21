@@ -1,28 +1,28 @@
-// --- FRASES CV TOOLS (SEÑALIZACIÓN VIAL + CHONI) ---
+// --- FRASES CHONI-ZEN (PAZ PERO DIVA) ---
 const PHRASES = {
   period: [
-      "⛔ STOP. CALZADA CORTADA POR DERRUMBES. Ni se te ocurra pasar.",
-      "🛑 PROHIBIDO EL PASO. Zona catastrófica. Trae Ibuprofeno o da media vuelta.",
-      "🚧 OBRAS EN LA VÍA. Pavimento sangriento. Circule con precaución.",
-      "⛔ ACCESO DENEGADO. La Reina está de mantenimiento. Volveremos pronto."
+      "🩸 Detox emocional. Hoy sofá, mascarilla y que el mundo espere.",
+      "✨ Alineando chakras desde la cama. No molestar.",
+      "🧘‍♀️ Fluyendo con la marea roja. Tráeme chocolate y nadie saldrá herido.",
+      "🚫 Cerrado por limpieza de aura. Vuelva usted mañana."
   ],
   follicular: [
-      "🚀 AUTOPISTA HACIA EL CIELO. Vía libre y sin radares, guapa.",
-      "✅ PRIORIDAD ABSOLUTA. Tienes el semáforo en verde. Acelera.",
-      "✨ FIRME EN BUEN ESTADO. Estás para que te multen por exceso de belleza.",
-      "🔵 OBLIGATORIO DIVERTIRSE. Circulación fluida y buen rollo."
+      "🦋 Saliendo del capullo. Hoy te sientes bichota.",
+      "💅 Manifestando abundancia y pelazo. Estás radiante.",
+      "✨ Energía de Diosa Suprema. Sube esa selfie ya.",
+      "🔋 Batería social al 100%. A brillar, mi ciela."
   ],
   ovulation: [
-      "⚠️ PELIGRO: CURVAS PELIGROSAS. Riesgo de accidente (bebé a bordo).",
-      "⚠️ ATENCIÓN: FIRME FÉRTIL. Se derrapa fácil. Usa cadenas (o condón).",
-      "🔥 ALTA VELOCIDAD. Radares activados. Eres un peligro público ahora mismo.",
-      "⚠️ CEDA EL PASO. Tienes la prioridad biológica. Cuidadito con el choque."
+      "🔥 Fertilidad a tope. Eres un imán de atracción masiva.",
+      "👶 Universo fértil. Cuidado con lo que deseas (y con lo que haces).",
+      "🐆 Estás magnética. Hoy consigues lo que quieras.",
+      "💋 Labios rojos y ovarios trabajando. Precaución, amiga."
   ],
   luteal: [
-      "🚧 CALZADA DEFORMADA (SPM). Pavimento deslizante y mucha mala hostia.",
-      "⛈️ PELIGRO POR NIEBLA Y DRAMAS. Visibilidad reducida. No me hables.",
-      "🛑 RETENCIONES IMPORTANTES. Estoy hinchada como un camión de 8 ejes.",
-      "⚠️ ANIMALES SUELTOS. Muerdo si te acercas. Mantén la distancia de seguridad."
+      "⛈️ Mercurio retrógrado en mi útero. Paciencia conmigo.",
+      "🔮 Intución a tope y aguante bajo cero. No me pruebes.",
+      "🍫 Necesito mimos o un atraco a la pastelería.",
+      "💣 Fase sensible. Si lloras es normal, si gritas también."
   ]
 };
 
@@ -31,122 +31,131 @@ const UI = {
   phase: document.getElementById('phaseName'),
   msg: document.getElementById('dailyMessage'),
   panel: document.getElementById('settingsPanel'),
-  signRing: document.getElementById('cycleRing') // Para cambiar el color del borde
+  inputs: {
+      date: document.getElementById('lastPeriod'),
+      cycle: document.getElementById('cycleDays'),
+      phone: document.getElementById('phone')
+  }
 };
+
+// CLAVE ÚNICA PARA GUARDAR DATOS
+const STORAGE_KEY = 'pinkyApp_v1';
 
 window.onload = () => {
-  if(Notification.permission !== "granted") Notification.requestPermission();
-  if(localStorage.getItem('cvData')) loadData();
-  else openSettings();
+  console.log("Iniciando App...");
+  
+  // Intentar cargar datos
+  const data = localStorage.getItem(STORAGE_KEY);
+  
+  if(data) {
+      console.log("Datos encontrados:", data);
+      calculate(JSON.parse(data));
+  } else {
+      console.log("No hay datos. Abriendo ajustes.");
+      openSettings();
+  }
 };
-
-function loadData() {
-  const data = JSON.parse(localStorage.getItem('cvData'));
-  calculate(data);
-}
 
 function calculate(data) {
   const last = new Date(data.date);
   const today = new Date();
+  
+  // Validar fecha
+  if(isNaN(last.getTime())) {
+      alert("Error en la fecha. Por favor configura de nuevo.");
+      openSettings();
+      return;
+  }
+
   const diffTime = Math.abs(today - last);
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
   
   let day = diffDays % parseInt(data.cycle);
-  if (day === 0) day = parseInt(data.cycle); 
+  if (day === 0) day = parseInt(data.cycle);
   if (diffDays === 0) day = 1;
 
   updateUI(day);
-  scheduleNotification(day);
 }
 
 function updateUI(day) {
   UI.day.innerText = day;
-  let phase = "", key = "", color = "";
+  let phase = "", key = "";
 
-  if (day <= 5) { 
-      phase = "⛔ STOP / REGLA"; 
-      key = "period"; 
-      color = "#cc0000"; // Rojo Stop
-  } else if (day <= 13) { 
-      phase = "✅ VÍA LIBRE"; 
-      key = "follicular"; 
-      color = "#0055a4"; // Azul Obligación
-  } else if (day <= 16) { 
-      phase = "⚠️ PELIGRO"; 
-      key = "ovulation"; 
-      color = "#ffcc00"; // Amarillo Peligro
-      UI.signRing.style.borderColor = color; // Borde amarillo en peligro
-  } else { 
-      phase = "🚧 OBRAS (SPM)"; 
-      key = "luteal"; 
-      color = "#ff6600"; // Naranja Obras
-  }
-
-  // Si no es peligro, el borde vuelve a rojo estándar de prohibición
-  if (key !== 'ovulation' && key !== 'luteal') {
-      UI.signRing.style.borderColor = "#cc0000";
-  } else if (key === 'luteal') {
-      UI.signRing.style.borderColor = "#ff6600";
-  }
+  if (day <= 5) { phase = "La Regla 🩸"; key = "period"; }
+  else if (day <= 13) { phase = "Diva Mode ✨"; key = "follicular"; }
+  else if (day <= 16) { phase = "Ovulación 🔥"; key = "ovulation"; }
+  else { phase = "SPM / Dramas 🔮"; key = "luteal"; }
 
   UI.phase.innerText = phase;
   const list = PHRASES[key];
   UI.msg.innerText = list[Math.floor(Math.random() * list.length)];
 }
 
-// --- NOTIFICACIONES Y WHATSAPP VIAL ---
+// --- FUNCIONES DE GUARDADO ROBUSTO ---
 
-function scheduleNotification(currentDay) {
-  const triggerDays = [1, 14, 25];
-  if (triggerDays.includes(currentDay)) {
-      const lastNotif = localStorage.getItem('lastNotifDate');
-      const todayStr = new Date().toDateString();
-      if (lastNotif !== todayStr) {
-          sendNotification(`🚧 CV TOOLS INFORMA: DÍA ${currentDay}`, UI.msg.innerText);
-          localStorage.setItem('lastNotifDate', todayStr);
-      }
+function saveSettings() {
+  const date = UI.inputs.date.value;
+  const cycle = UI.inputs.cycle.value;
+  const phone = UI.inputs.phone.value;
+
+  if(!date || !cycle || !phone) {
+      alert("¡Reina! Tienes que rellenar todo para que funcione la magia.");
+      return;
+  }
+
+  const userData = { date, cycle, phone };
+  
+  // Guardar en LocalStorage
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+  
+  alert("✅ ¡Datos guardados! Tu ciclo está bajo control.");
+  closeSettings();
+  calculate(userData);
+}
+
+function openSettings() { 
+  UI.panel.classList.add('active');
+  
+  // Al abrir, rellenamos los inputs con lo que ya había (para que no parezca que se borró)
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if(saved) {
+      const data = JSON.parse(saved);
+      UI.inputs.date.value = data.date;
+      UI.inputs.cycle.value = data.cycle;
+      UI.inputs.phone.value = data.phone;
   }
 }
 
-function sendNotification(title, body) {
-  if (Notification.permission === "granted") {
-      new Notification(title, {
-          body: body,
-          icon: "https://cdn-icons-png.flaticon.com/512/3097/3097180.png", // Icono cono
-          vibrate: [200, 100, 200, 100, 200]
-      });
+function closeSettings() { 
+  // Solo dejamos cerrar si ya hay datos guardados
+  if(localStorage.getItem(STORAGE_KEY)) {
+      UI.panel.classList.remove('active'); 
+  } else {
+      alert("Guarda primero, porfa.");
   }
 }
 
 function markPeriodToday() {
-  if(confirm("🛑 ¿DETENEMOS EL TRÁFICO? ¿Te ha bajado hoy?")) {
+  if(confirm("¿Te ha bajado hoy? Vamos a resetear el ciclo al Día 1.")) {
       const today = new Date().toISOString().split('T')[0];
-      let data = JSON.parse(localStorage.getItem('cvData')) || { cycle: 28, phone: "" };
-      data.date = today;
-      localStorage.setItem('cvData', JSON.stringify(data));
-      loadData();
-      alert("✅ TRÁFICO RESTABLECIDO. Día 1.");
+      
+      // Recuperar datos viejos para no perder el teléfono
+      let currentData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || { cycle: 28, phone: "" };
+      
+      currentData.date = today; // Actualizamos fecha
+      
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData));
+      calculate(currentData);
+      alert("🩸 Ciclo reiniciado. Cuídate mucho hoy.");
   }
 }
 
 function notifyBoyfriend() {
-  const data = JSON.parse(localStorage.getItem('cvData'));
-  if(!data || !data.phone) return alert("⚠️ Rellena el parte de accidente en ajustes primero.");
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if(!saved) return alert("Configura los ajustes primero.");
   
-  const text = `🚧 CV TOOLS INFORMA: Parte de situación vial.\nDía: ${UI.day.innerText} (${UI.phase.innerText})\nEstado de la vía: "${UI.msg.innerText}"\n\nRespete las señales. Circule con precaución.`;
+  const data = JSON.parse(saved);
+  const text = `💖 Hola. Update de mi ciclo:\nEstoy en el día ${UI.day.innerText} (${UI.phase.innerText}).\nMood: "${UI.msg.innerText}"\n\nTrátame como a una reina. Besis.`;
+  
   window.open(`https://wa.me/${data.phone}?text=${encodeURIComponent(text)}`);
 }
-
-function saveSettings() {
-  const date = document.getElementById('lastPeriod').value;
-  const cycle = document.getElementById('cycleDays').value;
-  const phone = document.getElementById('phone').value;
-  if(!date || !phone) return alert("⚠️ Faltan datos en el atestado.");
-  const data = { date, cycle, phone };
-  localStorage.setItem('cvData', JSON.stringify(data));
-  closeSettings();
-  loadData();
-}
-
-function openSettings() { UI.panel.classList.add('active'); }
-function closeSettings() { UI.panel.classList.remove('active'); }

@@ -3,86 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>La Regla @ CV Tools</title>
+    <title>La Regla Pink</title>
     <link rel="stylesheet" href="estilo.css">
-    <!-- Fuentes industriales tipo señal de tráfico -->
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Roboto:wght@400;900&display=swap" rel="stylesheet">
+    <!-- Fuentes: Pacifico (Cuqui) y Montserrat (Moderna) -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Pacifico&display=swap" rel="stylesheet">
 </head>
 <body>
-    
-    <!-- Fondo asfalto -->
-    <div class="asphalt-bg"></div>
-    
-    <!-- Cinta de peligro arriba y abajo -->
-    <div class="hazard-tape top"></div>
+
+    <!-- Fondo degradado suave -->
+    <div class="bg-gradient"></div>
 
     <div class="app-container">
-        <!-- Encabezado CV TOOLS -->
-        <header class="header">
-            <div class="brand-box">
-                <span class="brand-cv">CV TOOLS</span>
-                <span class="brand-sub">LA REGLA</span>
-            </div>
+        <header>
+            <h1>La Regla APP <span class="heart">💖</span></h1>
+            <p class="subtitle">CV TOOLS</p>
         </header>
 
-        <!-- Señal de Tráfico Central (Límite de Velocidad / Día) -->
-        <div class="display-area">
-            <div class="traffic-sign-circle" id="cycleRing">
-                <div class="sign-content">
-                    <span class="label-sign">DÍA</span>
+        <!-- Círculo Central -->
+        <div class="main-card glass">
+            <div class="cycle-ring" id="cycleRing">
+                <div class="inner-content">
+                    <span class="label-top">DÍA DEL CICLO</span>
                     <span class="day-number" id="dayNum">--</span>
+                    <div class="phase-pill" id="phaseName">Cargando...</div>
                 </div>
             </div>
-            <!-- Placa complementaria rectangular debajo -->
-            <div class="sign-plate">
-                <span id="phaseName">CARGANDO COMPRESAS...</span>
-            </div>
         </div>
 
-        <!-- Mensaje (Panel de Mensaje Variable) -->
-        <div class="vms-panel">
-            <p id="dailyMessage">CALCULANDO MENSTRUACIÓN TÍA....</p>
+        <!-- Frase del día -->
+        <div class="quote-box glass">
+            <p id="dailyMessage">✨ Alineando los astros...</p>
         </div>
 
-        <!-- Botonera -->
+        <!-- Botones (Separados y bonitos) -->
         <div class="controls">
-            <!-- Botón estilo señal de dirección (Azul) -->
-            <button class="btn-traffic blue" onclick="notifyBoyfriend()">
-                📢 ENVIAR WHATSAPP DE AVISO REGLA 
+            <button class="btn-pink" onclick="notifyBoyfriend()">
+                💅 Avisar al Churri (WhatsApp)
             </button>
 
-            <!-- Botón estilo señal de STOP (Rojo) -->
-            <button class="btn-traffic red" onclick="markPeriodToday()">
-                🛑 ¡STOP! ME BAJÓ HOY
+            <button class="btn-white" onclick="markPeriodToday()">
+                🩸 ¡Me bajó hoy! (Reset)
             </button>
             
-            <!-- Botón estilo obras (Amarillo) -->
-            <button class="btn-traffic yellow" onclick="openSettings()">
-                🚧 MANTENIMIENTO (AJUSTES)
+            <button class="btn-link" onclick="openSettings()">
+                ⚙️ Ajustes y Secretos
             </button>
         </div>
     </div>
 
-    <div class="hazard-tape bottom"></div>
-
     <!-- Panel Configuración -->
-    <div id="settingsPanel" class="settings-modal">
+    <div id="settingsPanel" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2>🚧 ZONA DE PELIGRO POR REGLA</h2>
+            <h3>✨ Configuración ✨</h3>
+            <p class="modal-desc">Rellena esto una vez y relájate, putón berbenero.</p>
+            
+            <div class="input-group">
+                <label>¿Cuándo te bajó la última vez zorra?</label>
+                <input type="date" id="lastPeriod">
             </div>
             
-            <label>ÚLTIMA REGLA DEL PUTÓN:</label>
-            <input type="date" id="lastPeriod">
+            <div class="input-group">
+                <label>Duración del ciclo (días)</label>
+                <input type="number" id="cycleDays" placeholder="Ej: 28">
+            </div>
             
-            <label>DIAS QUE TARDA EN BAJARTE ZORRA:</label>
-            <input type="number" id="cycleDays" placeholder="28">
+            <div class="input-group">
+                <label>Móvil para avisos (con 34). Es para amargarle la existencia...</label>
+                <input type="number" id="phone" placeholder="Ej: 34666...">
+            </div>
             
-            <label>TELÉFONO EMERGENCIAS (NOVI@):</label>
-            <input type="number" id="phone" placeholder="34600...">
-            
-            <button class="btn-traffic blue" onclick="saveSettings()">GUARDAR</button>
-            <button class="btn-traffic white" onclick="closeSettings()">CANCELAR</button>
+            <div class="modal-buttons">
+                <button class="btn-pink full" onclick="saveSettings()">GUARDAR DATOS 💾</button>
+                <button class="btn-link" onclick="closeSettings()">Cerrar</button>
+            </div>
         </div>
     </div>
 

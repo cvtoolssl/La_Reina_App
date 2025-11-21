@@ -1,169 +1,211 @@
 :root {
-    --traffic-red: #cc0000;
-    --traffic-blue: #0055a4;
-    --traffic-yellow: #ffcc00;
-    --traffic-orange: #ff6600;
-    --traffic-white: #ffffff;
-    --traffic-black: #1a1a1a;
-    --asphalt: #2e2e2e;
-    --pole-grey: #888888;
+    --pink-light: #ffe6f2;
+    --pink-hot: #ff00cc;
+    --pink-deep: #b30089;
+    --text-dark: #4a0d36;
+    --white-glass: rgba(255, 255, 255, 0.85);
 }
 
-* { box-sizing: border-box; }
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* Quita el azul al tocar en Android */
+}
 
 body {
     margin: 0;
-    background-color: var(--asphalt);
-    font-family: 'Roboto', sans-serif; /* Fuente muy legible tipo señal */
-    color: white;
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
     height: 100vh;
     width: 100vw;
     overflow: hidden;
+    color: var(--text-dark);
 }
-
-/* Fondo Asfalto Granulado */
-.asphalt-bg {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.15'/%3E%3C/svg%3E");
-    background-color: #222;
-    z-index: -1;
-}
-
-/* CINTA DE PELIGRO (Arriba y abajo) */
-.hazard-tape {
-    position: absolute; left: 0; width: 100%; height: 15px;
-    background: repeating-linear-gradient(
-        45deg,
-        var(--traffic-yellow),
-        var(--traffic-yellow) 10px,
-        var(--traffic-black) 10px,
-        var(--traffic-black) 20px
-    );
-    z-index: 10;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-}
-.top { top: 0; }
-.bottom { bottom: 0; }
 
 .app-container {
-    width: 100%; height: 100%; padding: 30px 20px;
-    display: flex; flex-direction: column; justify-content: space-between; align-items: center;
-}
-
-/* HEADER INDUSTRIAL */
-.header {
-    text-align: center;
-    background: var(--traffic-white);
-    color: var(--traffic-black);
-    padding: 10px 20px;
-    border-radius: 5px;
-    border: 3px solid var(--traffic-black);
+    height: 100%;
     width: 100%;
-    transform: rotate(-1deg); /* Un poco choni */
-    box-shadow: 3px 3px 0px rgba(0,0,0,0.5);
-}
-.brand-cv { display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 2.5rem; line-height: 1; color: var(--traffic-orange); -webkit-text-stroke: 1px black;}
-.brand-sub { font-size: 0.7rem; font-weight: 900; letter-spacing: 1px; color: black; }
-
-/* SEÑAL DE TRÁFICO (CÍRCULO) */
-.display-area {
-    flex-grow: 1; display: flex; flex-direction: column;
-    justify-content: center; align-items: center; width: 100%;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Esto empuja el contenido para usar todo el alto */
+    align-items: center;
 }
 
-.traffic-sign-circle {
-    width: 60vw; height: 60vw; max-width: 240px; max-height: 240px;
-    border-radius: 50%;
+/* CABECERA */
+header { text-align: center; margin-top: 10px; }
+h1 {
+    font-family: 'Pacifico', cursive;
+    font-size: 2.8rem;
+    margin: 0;
+    color: var(--pink-hot);
+    text-shadow: 2px 2px 0px white;
+}
+.subtitle {
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: white;
+    background: var(--pink-deep);
+    padding: 5px 15px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+/* TARJETA CENTRAL (CRISTAL) */
+.main-card {
+    flex-grow: 1; /* Ocupa el espacio disponible */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 45vh; /* Que no sea gigante */
+}
+
+.cycle-ring {
+    width: 240px;
+    height: 240px;
     background: white;
-    border: 15px solid var(--traffic-red); /* Borde rojo de prohibición/límite */
-    display: flex; justify-content: center; align-items: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(255, 0, 204, 0.2);
+    border: 8px solid white;
     position: relative;
 }
 
-/* Efecto reflectante */
-.traffic-sign-circle::after {
-    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+/* Borde degradado animado */
+.cycle-ring::before {
+    content: '';
+    position: absolute;
+    top: -12px; left: -12px; right: -12px; bottom: -12px;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%);
-    pointer-events: none;
+    background: linear-gradient(45deg, var(--pink-hot), #ffd700, var(--pink-hot));
+    z-index: -1;
+    animation: spin 6s linear infinite;
 }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-.sign-content { text-align: center; color: var(--traffic-black); }
-.day-number { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 6rem; line-height: 0.9; display: block; }
-.label-sign { font-size: 0.8rem; font-weight: bold; letter-spacing: 2px; }
+.inner-content { text-align: center; }
 
-/* PLACA COMPLEMENTARIA */
-.sign-plate {
-    background: white;
-    color: black;
-    border: 3px solid black;
-    padding: 5px 15px;
-    margin-top: -10px; /* Pegado a la señal */
-    border-radius: 3px;
+.day-number {
+    font-size: 5.5rem;
     font-weight: 900;
-    text-transform: uppercase;
-    font-size: 1.2rem;
-    z-index: 2;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    line-height: 1;
+    color: var(--pink-hot);
+    display: block;
+}
+.label-top { font-size: 0.8rem; color: #999; font-weight: bold; letter-spacing: 1px; }
+
+.phase-pill {
+    background: var(--pink-deep);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-top: 10px;
+    display: inline-block;
+    box-shadow: 0 4px 10px rgba(179, 0, 137, 0.3);
 }
 
-/* PANEL DE MENSAJE VARIABLE (LED) */
-.vms-panel {
-    background: black;
-    border: 4px solid #444;
+/* FRASE DEL DÍA */
+.quote-box {
+    background: var(--white-glass);
+    padding: 20px;
+    border-radius: 20px;
     width: 100%;
-    padding: 15px;
-    border-radius: 5px;
     text-align: center;
-    margin-bottom: 10px;
-    box-shadow: 0 0 10px black;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
 }
 #dailyMessage {
     margin: 0;
-    font-family: 'Courier New', monospace; /* Efecto matriz de puntos */
+    font-style: italic;
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 1rem;
+}
+
+/* BOTONERA - AQUI ESTÁ LA CLAVE DEL ESPACIADO */
+.controls {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espacio entre botones !! */
+    margin-bottom: 10px;
+}
+
+button {
+    border: none;
+    padding: 18px;
+    border-radius: 50px;
+    font-family: 'Montserrat', sans-serif;
     font-weight: bold;
-    color: var(--traffic-orange); /* Naranja LED */
-    text-shadow: 0 0 5px var(--traffic-orange);
+    font-size: 1rem;
+    cursor: pointer;
     text-transform: uppercase;
-    font-size: 0.9rem;
-    line-height: 1.4;
-}
-
-/* BOTONES TRÁFICO */
-.controls { width: 100%; display: flex; flex-direction: column; gap: 10px; }
-
-.btn-traffic {
-    border: none; padding: 15px; border-radius: 5px;
-    font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
-    font-size: 1.1rem; text-transform: uppercase; cursor: pointer;
-    border: 2px solid white;
-    box-shadow: 0 4px 0 rgba(0,0,0,0.4);
+    width: 100%;
     transition: transform 0.1s;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
-.btn-traffic:active { transform: translateY(4px); box-shadow: none; }
+button:active { transform: scale(0.98); }
 
-.blue { background-color: var(--traffic-blue); color: white; } /* Informativa */
-.red { background-color: var(--traffic-red); color: white; } /* Prohibición/Stop */
-.yellow { background-color: var(--traffic-yellow); color: black; border-color: black; } /* Obras */
-.white { background-color: white; color: black; border: 2px solid black; }
+.btn-pink {
+    background: linear-gradient(90deg, var(--pink-hot), #ff66cc);
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 0, 204, 0.4);
+}
+.btn-white {
+    background: white;
+    color: var(--pink-hot);
+    border: 2px solid var(--pink-hot);
+}
+.btn-link {
+    background: none;
+    box-shadow: none;
+    color: var(--text-dark);
+    font-size: 0.8rem;
+    padding: 10px;
+    opacity: 0.7;
+    text-transform: none;
+    text-decoration: underline;
+}
 
-/* MODAL */
-.settings-modal {
+/* MODAL (AJUSTES) */
+.modal {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.9); z-index: 100;
-    display: none; justify-content: center; align-items: center;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(5px);
+    z-index: 100;
+    display: none; /* Oculto por defecto */
+    justify-content: center;
+    align-items: center;
 }
-.settings-modal.active { display: flex; }
-.modal-content {
-    width: 90%; max-width: 350px; background: var(--traffic-orange);
-    padding: 20px; border-radius: 10px; border: 5px solid white;
-    box-shadow: 0 0 20px black;
-    text-align: left;
-}
-.modal-header { background: black; color: var(--traffic-yellow); padding: 10px; text-align: center; margin: -20px -20px 20px -20px; }
-.modal-header h2 { margin: 0; font-size: 1.2rem; letter-spacing: 1px; }
+.modal.active { display: flex; }
 
-label { display: block; color: black; font-weight: 900; margin-top: 10px; font-size: 0.9rem; }
-input { width: 100%; padding: 10px; margin-top: 5px; border: 3px solid black; font-weight: bold; }
+.modal-content {
+    background: white;
+    width: 85%;
+    max-width: 350px;
+    padding: 30px;
+    border-radius: 30px;
+    box-shadow: 0 10px 40px rgba(255, 0, 204, 0.15);
+    border: 2px solid var(--pink-light);
+}
+
+h3 { margin: 0 0 10px 0; color: var(--pink-hot); text-align: center; font-size: 1.5rem; }
+.modal-desc { text-align: center; color: #888; font-size: 0.9rem; margin-bottom: 20px; }
+
+.input-group { margin-bottom: 15px; }
+label { display: block; font-size: 0.8rem; font-weight: bold; color: var(--text-dark); margin-bottom: 5px; }
+input {
+    width: 100%; padding: 12px; border-radius: 10px;
+    border: 2px solid var(--pink-light); background: #fffbfc;
+    font-family: inherit; font-size: 1rem; color: var(--pink-deep);
+}
+input:focus { outline: none; border-color: var(--pink-hot); }
+
+.full { width: 100%; margin-top: 10px; }
