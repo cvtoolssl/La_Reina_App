@@ -3,70 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>La Reina App</title>
+    <title>La Regla @ CV Tools</title>
     <link rel="stylesheet" href="estilo.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Fuentes industriales tipo señal de tráfico -->
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Roboto:wght@400;900&display=swap" rel="stylesheet">
 </head>
 <body>
     
-    <div class="gold-overlay"></div>
+    <!-- Fondo asfalto -->
+    <div class="asphalt-bg"></div>
+    
+    <!-- Cinta de peligro arriba y abajo -->
+    <div class="hazard-tape top"></div>
 
     <div class="app-container">
-        <!-- Encabezado -->
+        <!-- Encabezado CV TOOLS -->
         <header class="header">
-            <div class="crown">♕</div>
-            <h1>LA REGLA EN CV TOOLS</h1>
+            <div class="brand-box">
+                <span class="brand-cv">CV TOOLS</span>
+                <span class="brand-sub">LA REGLA</span>
+            </div>
         </header>
 
-        <!-- Círculo Central (Se ajusta solo) -->
+        <!-- Señal de Tráfico Central (Límite de Velocidad / Día) -->
         <div class="display-area">
-            <div class="ring" id="cycleRing">
-                <div class="ring-content">
-                    <span class="label-mini">DÍA DEL CICLO</span>
+            <div class="traffic-sign-circle" id="cycleRing">
+                <div class="sign-content">
+                    <span class="label-sign">DÍA</span>
                     <span class="day-number" id="dayNum">--</span>
-                    <span class="phase-badge" id="phaseName">...</span>
                 </div>
+            </div>
+            <!-- Placa complementaria rectangular debajo -->
+            <div class="sign-plate">
+                <span id="phaseName">CARGANDO COMPRESAS...</span>
             </div>
         </div>
 
-        <!-- Mensaje -->
-        <div class="message-card">
-            <p id="dailyMessage">Cargando tu imperio...</p>
+        <!-- Mensaje (Panel de Mensaje Variable) -->
+        <div class="vms-panel">
+            <p id="dailyMessage">CALCULANDO MENSTRUACIÓN....</p>
         </div>
 
         <!-- Botonera -->
         <div class="controls">
-            <button class="btn-whatsapp" onclick="notifyBoyfriend()">
-                📢 AVISAR POR WHATSAPP
+            <!-- Botón estilo señal de dirección (Azul) -->
+            <button class="btn-traffic blue" onclick="notifyBoyfriend()">
+                📢 ENVIAR WHATSAPP DE AVISO REGLA 
             </button>
 
-            <!-- NUEVO BOTÓN: RESETEAR SI VIENE LA REGLA -->
-            <button class="btn-period" onclick="markPeriodToday()">
-                🩸 ¡ME HA BAJADO HOY!
+            <!-- Botón estilo señal de STOP (Rojo) -->
+            <button class="btn-traffic red" onclick="markPeriodToday()">
+                🛑 ¡STOP! ME BAJÓ HOY
             </button>
             
-            <button class="btn-settings" onclick="openSettings()">
-                ⚙️ Configuración
+            <!-- Botón estilo obras (Amarillo) -->
+            <button class="btn-traffic yellow" onclick="openSettings()">
+                🚧 MANTENIMIENTO (AJUSTES)
             </button>
         </div>
     </div>
 
+    <div class="hazard-tape bottom"></div>
+
     <!-- Panel Configuración -->
     <div id="settingsPanel" class="settings-modal">
         <div class="modal-content">
-            <h2>AJUSTES DEL REINO</h2>
+            <div class="modal-header">
+                <h2>🚧 ZONA DE OBRAS</h2>
+            </div>
             
-            <label>Fecha de la última regla:</label>
+            <label>ÚLTIMA REGLA DEL PUTÓN:</label>
             <input type="date" id="lastPeriod">
             
-            <label>Duración del ciclo (días):</label>
+            <label>DIAS MEDIOS EN QUE TE BAJA ZORRA:</label>
             <input type="number" id="cycleDays" placeholder="28">
             
-            <label>Móvil (con prefijo 34):</label>
+            <label>TELÉFONO EMERGENCIAS (NOVI@):</label>
             <input type="number" id="phone" placeholder="34600...">
             
-            <button class="btn-save" onclick="saveSettings()">GUARDAR CAMBIOS</button>
-            <button class="btn-close" onclick="closeSettings()">Cerrar sin guardar</button>
+            <button class="btn-traffic blue" onclick="saveSettings()">GUARDAR Y ABRIR TRÁFICO</button>
+            <button class="btn-traffic white" onclick="closeSettings()">CANCELAR OBRAS</button>
         </div>
     </div>
 

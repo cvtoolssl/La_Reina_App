@@ -1,154 +1,169 @@
 :root {
-    --gold: #d4af37;
-    --gold-dark: #aa8a28;
-    --black: #050505;
-    --glass: rgba(255, 255, 255, 0.08);
-    --neon-pink: #ff007f;
+    --traffic-red: #cc0000;
+    --traffic-blue: #0055a4;
+    --traffic-yellow: #ffcc00;
+    --traffic-orange: #ff6600;
+    --traffic-white: #ffffff;
+    --traffic-black: #1a1a1a;
+    --asphalt: #2e2e2e;
+    --pole-grey: #888888;
 }
 
-* {
-    box-sizing: border-box; /* ESTO EVITA QUE SE SALGA DE LA PANTALLA */
-}
+* { box-sizing: border-box; }
 
 body {
     margin: 0;
-    background-color: var(--black);
-    font-family: 'Montserrat', sans-serif;
+    background-color: var(--asphalt);
+    font-family: 'Roboto', sans-serif; /* Fuente muy legible tipo señal */
     color: white;
-    height: 100vh; /* Altura completa */
-    width: 100vw;  /* Anchura completa */
-    overflow: hidden; /* Evita scroll doble */
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
 }
 
-.gold-overlay {
+/* Fondo Asfalto Granulado */
+.asphalt-bg {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle at 50% 20%, #2a2a00 0%, #000000 80%);
+    background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.15'/%3E%3C/svg%3E");
+    background-color: #222;
     z-index: -1;
 }
 
+/* CINTA DE PELIGRO (Arriba y abajo) */
+.hazard-tape {
+    position: absolute; left: 0; width: 100%; height: 15px;
+    background: repeating-linear-gradient(
+        45deg,
+        var(--traffic-yellow),
+        var(--traffic-yellow) 10px,
+        var(--traffic-black) 10px,
+        var(--traffic-black) 20px
+    );
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+.top { top: 0; }
+.bottom { bottom: 0; }
+
 .app-container {
+    width: 100%; height: 100%; padding: 30px 20px;
+    display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+}
+
+/* HEADER INDUSTRIAL */
+.header {
+    text-align: center;
+    background: var(--traffic-white);
+    color: var(--traffic-black);
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: 3px solid var(--traffic-black);
     width: 100%;
-    height: 100%;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* Distribuye elementos arriba y abajo */
-    align-items: center;
+    transform: rotate(-1deg); /* Un poco choni */
+    box-shadow: 3px 3px 0px rgba(0,0,0,0.5);
 }
+.brand-cv { display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 2.5rem; line-height: 1; color: var(--traffic-orange); -webkit-text-stroke: 1px black;}
+.brand-sub { font-size: 0.7rem; font-weight: 900; letter-spacing: 1px; color: black; }
 
-/* CABECERA */
-.header { text-align: center; margin-bottom: 10px; }
-.crown { font-size: 2.5rem; color: var(--gold); line-height: 1; }
-h1 { 
-    font-family: 'Cinzel', serif; 
-    font-size: 2rem; 
-    margin: 0; 
-    letter-spacing: 3px; 
-    color: white; 
-    text-shadow: 0 0 10px var(--gold);
-}
-
-/* CÍRCULO RESPONSIVO */
+/* SEÑAL DE TRÁFICO (CÍRCULO) */
 .display-area {
-    flex-grow: 1; /* Ocupa el espacio sobrante */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
+    flex-grow: 1; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; width: 100%;
 }
 
-.ring {
-    /* El tamaño se adapta al ancho de la pantalla */
-    width: 60vw; 
-    height: 60vw;
-    max-width: 250px; 
-    max-height: 250px;
+.traffic-sign-circle {
+    width: 60vw; height: 60vw; max-width: 240px; max-height: 240px;
     border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.1);
-    box-shadow: 0 0 30px rgba(212, 175, 55, 0.15);
-    display: flex; 
-    justify-content: center; 
-    align-items: center;
+    background: white;
+    border: 15px solid var(--traffic-red); /* Borde rojo de prohibición/límite */
+    display: flex; justify-content: center; align-items: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
     position: relative;
-    background: rgba(0,0,0,0.4);
 }
 
-/* Borde giratorio */
-.ring::before {
-    content: ''; position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px;
+/* Efecto reflectante */
+.traffic-sign-circle::after {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     border-radius: 50%;
-    border: 3px solid transparent;
-    border-top-color: var(--gold);
-    border-right-color: var(--neon-pink);
-    animation: spin 4s linear infinite;
-}
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-.ring-content { text-align: center; display: flex; flex-direction: column; align-items: center; }
-
-.day-number { 
-    font-family: 'Cinzel', serif; 
-    font-size: 4.5rem; 
-    line-height: 1; 
-    color: white;
-    margin: 5px 0;
-}
-.label-mini { font-size: 0.6rem; letter-spacing: 2px; color: #888; }
-.phase-badge { 
-    color: var(--gold); 
-    font-weight: bold; 
-    font-size: 0.9rem; 
-    background: rgba(212, 175, 55, 0.1);
-    padding: 2px 10px;
-    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%);
+    pointer-events: none;
 }
 
-/* MENSAJE */
-.message-card {
-    background: var(--glass);
-    backdrop-filter: blur(10px);
+.sign-content { text-align: center; color: var(--traffic-black); }
+.day-number { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 6rem; line-height: 0.9; display: block; }
+.label-sign { font-size: 0.8rem; font-weight: bold; letter-spacing: 2px; }
+
+/* PLACA COMPLEMENTARIA */
+.sign-plate {
+    background: white;
+    color: black;
+    border: 3px solid black;
+    padding: 5px 15px;
+    margin-top: -10px; /* Pegado a la señal */
+    border-radius: 3px;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    z-index: 2;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}
+
+/* PANEL DE MENSAJE VARIABLE (LED) */
+.vms-panel {
+    background: black;
+    border: 4px solid #444;
     width: 100%;
     padding: 15px;
-    border-radius: 15px;
-    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 5px;
     text-align: center;
-    margin-bottom: 15px;
-    min-height: 60px;
-    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 10px;
+    box-shadow: 0 0 10px black;
 }
-#dailyMessage { margin: 0; font-style: italic; color: #ddd; font-size: 0.95rem; }
+#dailyMessage {
+    margin: 0;
+    font-family: 'Courier New', monospace; /* Efecto matriz de puntos */
+    font-weight: bold;
+    color: var(--traffic-orange); /* Naranja LED */
+    text-shadow: 0 0 5px var(--traffic-orange);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
 
-/* BOTONES */
+/* BOTONES TRÁFICO */
 .controls { width: 100%; display: flex; flex-direction: column; gap: 10px; }
 
-button {
-    border: none; padding: 15px; border-radius: 8px; 
-    font-weight: bold; font-size: 0.9rem; cursor: pointer; 
-    text-transform: uppercase; font-family: 'Montserrat', sans-serif;
+.btn-traffic {
+    border: none; padding: 15px; border-radius: 5px;
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+    font-size: 1.1rem; text-transform: uppercase; cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.4);
     transition: transform 0.1s;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
 }
-button:active { transform: scale(0.97); }
+.btn-traffic:active { transform: translateY(4px); box-shadow: none; }
 
-.btn-whatsapp { background: linear-gradient(45deg, var(--gold), var(--gold-dark)); color: black; }
-.btn-period { background: rgba(255, 0, 80, 0.2); color: var(--neon-pink); border: 1px solid var(--neon-pink); }
-.btn-settings { background: transparent; color: #777; font-size: 0.8rem; padding: 10px; }
+.blue { background-color: var(--traffic-blue); color: white; } /* Informativa */
+.red { background-color: var(--traffic-red); color: white; } /* Prohibición/Stop */
+.yellow { background-color: var(--traffic-yellow); color: black; border-color: black; } /* Obras */
+.white { background-color: white; color: black; border: 2px solid black; }
 
-/* MODAL CONFIG */
+/* MODAL */
 .settings-modal {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.95); z-index: 100;
+    background: rgba(0,0,0,0.9); z-index: 100;
     display: none; justify-content: center; align-items: center;
 }
 .settings-modal.active { display: flex; }
 .modal-content {
-    width: 85%; max-width: 350px; background: #111; padding: 25px;
-    border-radius: 15px; border: 1px solid var(--gold); text-align: left;
+    width: 90%; max-width: 350px; background: var(--traffic-orange);
+    padding: 20px; border-radius: 10px; border: 5px solid white;
+    box-shadow: 0 0 20px black;
+    text-align: left;
 }
-.modal-content h2 { color: var(--gold); margin-top: 0; text-align: center; font-size: 1.2rem; }
-label { display: block; color: #aaa; margin-top: 15px; font-size: 0.8rem; }
-input {
-    width: 100%; padding: 12px; margin-top: 5px;
-    background: #222; border: 1px solid #444; color: white; border-radius: 5px;
-}
-.btn-save { background: var(--gold); color: black; margin-top: 20px; width: 100%; }
-.btn-close { background: transparent; color: #666; margin-top: 10px; width: 100%; }
+.modal-header { background: black; color: var(--traffic-yellow); padding: 10px; text-align: center; margin: -20px -20px 20px -20px; }
+.modal-header h2 { margin: 0; font-size: 1.2rem; letter-spacing: 1px; }
+
+label { display: block; color: black; font-weight: 900; margin-top: 10px; font-size: 0.9rem; }
+input { width: 100%; padding: 10px; margin-top: 5px; border: 3px solid black; font-weight: bold; }
