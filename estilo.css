@@ -1,103 +1,154 @@
 :root {
-    --gold: #D4AF37;
-    --black: #0a0a0a;
-    --dark-gray: #1a1a1a;
+    --gold: #d4af37;
+    --gold-dark: #aa8a28;
+    --black: #050505;
+    --glass: rgba(255, 255, 255, 0.08);
     --neon-pink: #ff007f;
+}
+
+* {
+    box-sizing: border-box; /* ESTO EVITA QUE SE SALGA DE LA PANTALLA */
 }
 
 body {
     margin: 0;
     background-color: var(--black);
+    font-family: 'Montserrat', sans-serif;
     color: white;
-    font-family: 'Lato', sans-serif;
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
+    height: 100vh; /* Altura completa */
+    width: 100vw;  /* Anchura completa */
+    overflow: hidden; /* Evita scroll doble */
 }
 
 .gold-overlay {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle at 50% 0%, #332a00 0%, #000000 80%);
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at 50% 20%, #2a2a00 0%, #000000 80%);
     z-index: -1;
 }
 
-.app {
+.app-container {
     width: 100%;
-    max-width: 400px;
+    height: 100%;
     padding: 20px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-    box-sizing: border-box;
+    justify-content: space-between; /* Distribuye elementos arriba y abajo */
+    align-items: center;
 }
 
-.header { text-align: center; margin-top: 20px; }
-.crown { font-size: 3rem; color: var(--gold); margin-bottom: -10px; }
-h1 { font-family: 'Cinzel', serif; font-size: 2.5rem; margin: 0; letter-spacing: 5px; color: white; }
-.subtitle { color: var(--gold); letter-spacing: 4px; font-size: 0.7rem; margin-top: 5px; }
+/* CABECERA */
+.header { text-align: center; margin-bottom: 10px; }
+.crown { font-size: 2.5rem; color: var(--gold); line-height: 1; }
+h1 { 
+    font-family: 'Cinzel', serif; 
+    font-size: 2rem; 
+    margin: 0; 
+    letter-spacing: 3px; 
+    color: white; 
+    text-shadow: 0 0 10px var(--gold);
+}
 
-/* ANILLO CENTRAL */
-.main-display { display: flex; justify-content: center; align-items: center; flex-grow: 1; }
+/* CÍRCULO RESPONSIVO */
+.display-area {
+    flex-grow: 1; /* Ocupa el espacio sobrante */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
 
 .ring {
-    width: 220px; height: 220px;
+    /* El tamaño se adapta al ancho de la pantalla */
+    width: 60vw; 
+    height: 60vw;
+    max-width: 250px; 
+    max-height: 250px;
     border-radius: 50%;
-    border: 2px solid #333;
-    box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
-    display: flex; justify-content: center; align-items: center;
+    border: 2px solid rgba(255,255,255,0.1);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.15);
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
     position: relative;
+    background: rgba(0,0,0,0.4);
 }
 
+/* Borde giratorio */
 .ring::before {
     content: ''; position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px;
     border-radius: 50%;
-    border: 2px solid transparent;
+    border: 3px solid transparent;
     border-top-color: var(--gold);
     border-right-color: var(--neon-pink);
-    animation: spin 5s linear infinite;
+    animation: spin 4s linear infinite;
 }
-
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-.ring-content { text-align: center; }
-.day-number { display: block; font-size: 5rem; font-family: 'Cinzel', serif; color: white; line-height: 1; }
-.label-top { font-size: 0.7rem; letter-spacing: 2px; color: #666; }
-.label-bottom { font-size: 1rem; color: var(--gold); font-weight: bold; margin-top: 10px; display: block; }
+.ring-content { text-align: center; display: flex; flex-direction: column; align-items: center; }
 
-/* MENSAJES */
-.glass {
-    background: rgba(255,255,255,0.05);
+.day-number { 
+    font-family: 'Cinzel', serif; 
+    font-size: 4.5rem; 
+    line-height: 1; 
+    color: white;
+    margin: 5px 0;
+}
+.label-mini { font-size: 0.6rem; letter-spacing: 2px; color: #888; }
+.phase-badge { 
+    color: var(--gold); 
+    font-weight: bold; 
+    font-size: 0.9rem; 
+    background: rgba(212, 175, 55, 0.1);
+    padding: 2px 10px;
+    border-radius: 10px;
+}
+
+/* MENSAJE */
+.message-card {
+    background: var(--glass);
     backdrop-filter: blur(10px);
-    padding: 20px;
+    width: 100%;
+    padding: 15px;
     border-radius: 15px;
     border: 1px solid rgba(255,255,255,0.1);
     text-align: center;
+    margin-bottom: 15px;
     min-height: 60px;
     display: flex; align-items: center; justify-content: center;
 }
-#dailyMessage { margin: 0; font-style: italic; color: #ccc; }
+#dailyMessage { margin: 0; font-style: italic; color: #ddd; font-size: 0.95rem; }
 
 /* BOTONES */
-.actions { margin-bottom: 20px; }
-.btn-gold {
-    background: linear-gradient(45deg, var(--gold), #aa8a28);
-    border: none; color: black; width: 100%; padding: 18px;
-    font-weight: bold; font-size: 1rem; letter-spacing: 1px;
-    border-radius: 5px; cursor: pointer; margin-bottom: 15px;
-    text-transform: uppercase;
-}
-.btn-link { background: none; border: none; color: #666; width: 100%; cursor: pointer; }
+.controls { width: 100%; display: flex; flex-direction: column; gap: 10px; }
 
-/* MODAL */
+button {
+    border: none; padding: 15px; border-radius: 8px; 
+    font-weight: bold; font-size: 0.9rem; cursor: pointer; 
+    text-transform: uppercase; font-family: 'Montserrat', sans-serif;
+    transition: transform 0.1s;
+}
+button:active { transform: scale(0.97); }
+
+.btn-whatsapp { background: linear-gradient(45deg, var(--gold), var(--gold-dark)); color: black; }
+.btn-period { background: rgba(255, 0, 80, 0.2); color: var(--neon-pink); border: 1px solid var(--neon-pink); }
+.btn-settings { background: transparent; color: #777; font-size: 0.8rem; padding: 10px; }
+
+/* MODAL CONFIG */
 .settings-modal {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.95);
-    z-index: 99; display: none; flex-direction: column; justify-content: center; padding: 40px; box-sizing: border-box;
+    background: rgba(0,0,0,0.95); z-index: 100;
+    display: none; justify-content: center; align-items: center;
 }
 .settings-modal.active { display: flex; }
-input { width: 100%; padding: 15px; margin: 10px 0 20px; background: #222; border: 1px solid #444; color: white; }
-.btn-save { background: white; color: black; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; }
-.btn-test { background: #333; color: white; border: none; padding: 10px; margin-top: 10px; width: 100%; cursor: pointer; }
+.modal-content {
+    width: 85%; max-width: 350px; background: #111; padding: 25px;
+    border-radius: 15px; border: 1px solid var(--gold); text-align: left;
+}
+.modal-content h2 { color: var(--gold); margin-top: 0; text-align: center; font-size: 1.2rem; }
+label { display: block; color: #aaa; margin-top: 15px; font-size: 0.8rem; }
+input {
+    width: 100%; padding: 12px; margin-top: 5px;
+    background: #222; border: 1px solid #444; color: white; border-radius: 5px;
+}
+.btn-save { background: var(--gold); color: black; margin-top: 20px; width: 100%; }
+.btn-close { background: transparent; color: #666; margin-top: 10px; width: 100%; }

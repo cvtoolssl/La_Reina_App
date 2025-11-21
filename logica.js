@@ -1,12 +1,11 @@
-// FRASES AUTOMÁTICAS (ESTILO DIVA)
+// --- FRASES GLAM ---
 const PHRASES = {
-  period: ["No estoy para nadie. Mándame Bizum y chocolate. 🩸", "Cerrado por mantenimiento uterino.", "Hoy la Reina necesita descanso absoluto."],
-  follicular: ["Estás brillando, nena. Cómete el mundo. ✨", "Energía de Bad Bitch activada.", "Ponte guapa que hoy se lía."],
-  ovulation: ["⚠️ ALERTA: Fertilidad máxima. Cuidado con el heredero.", "Estás magnética. Atraes miradas (y problemas). 🔥"],
-  luteal: ["Tengo la mecha corta. Que no me respiren. 💣", "Fase Dramas: Odiando al mundo en 3, 2, 1...", "Estoy hinchada de tanto aguantar tonterías."]
+  period: ["Modo avión ✈️. No existo para nadie.", "Cerrado por reformas uterinas.", "Ni me mires, ni me hables, solo trae chocolate.", "Soy un dragón, aviso. 🔥"],
+  follicular: ["Estás brillando más que tu iluminador. ✨", "Energía de Diosa. Sube foto ya.", "Hoy te comes el mundo, guapa.", "Piel perfecta, pelo perfecto, actitud perfecta."],
+  ovulation: ["⚠️ ALERTA DE BEBÉ. Eres súper fértil ahora.", "Estás magnética. Cuidado con lo que atraes.", "O usas protección o compras pañales. Tú verás."],
+  luteal: ["Tengo la mecha muy corta hoy. 💣", "Fase Dramas: Odiando a la humanidad.", "Estoy hinchada y tengo hambre. No preguntes.", "Si respires fuerte te muerdo."]
 };
 
-// ELEMENTOS
 const UI = {
   day: document.getElementById('dayNum'),
   phase: document.getElementById('phaseName'),
@@ -14,102 +13,100 @@ const UI = {
   panel: document.getElementById('settingsPanel')
 };
 
-// INICIAR
 window.onload = () => {
-  // Pedir permiso de notificación NADA MÁS ENTRAR
-  if (Notification.permission !== "granted") {
-      Notification.requestPermission();
+  // Cargar datos o pedir configuración
+  if(localStorage.getItem('reinaData')) {
+      loadData();
+  } else {
+      openSettings();
   }
   
-  loadData();
+  // Pedir permisos notificaciones (silencioso)
+  if(Notification.permission !== "granted") Notification.requestPermission();
 };
 
 function loadData() {
-  const data = localStorage.getItem('reinaData');
-  if (data) {
-      calculate(JSON.parse(data));
-      UI.panel.classList.remove('active');
-  } else {
-      UI.panel.classList.add('active');
-  }
+  const data = JSON.parse(localStorage.getItem('reinaData'));
+  calculate(data);
 }
 
 function calculate(data) {
   const last = new Date(data.date);
   const today = new Date();
-  const diff = Math.floor((today - last) / (1000 * 60 * 60 * 24));
-  const day = (diff % parseInt(data.cycle)) + 1;
-
-  updateUI(day, data);
   
-  // LÓGICA DE NOTIFICACIÓN AUTOMÁTICA
-  // Si es un día clave, intentamos lanzar la notificación
-  checkAndNotify(day);
+  // Diferencia en días
+  const diffTime = Math.abs(today - last);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+  
+  // Calcular día del ciclo actual
+  // Si diffDays es 0 (hoy), es día 1.
+  // El resto (%) nos da la posición en el ciclo.
+  let day = diffDays % parseInt(data.cycle);
+  if (day === 0) day = parseInt(data.cycle); 
+  
+  // Pequeño ajuste si la fecha es hoy mismo
+  if(diffDays === 0) day = 1;
+
+  updateUI(day);
 }
 
-function updateUI(day, data) {
+function updateUI(day) {
   UI.day.innerText = day;
   let phase = "", key = "";
 
-  if (day <= 5) { phase = "LA REGLA"; key = "period"; }
-  else if (day <= 13) { phase = "DIVA MODE"; key = "follicular"; }
-  else if (day <= 16) { phase = "OVULACIÓN"; key = "ovulation"; }
-  else { phase = "DRAMAS (SPM)"; key = "luteal"; }
+  if (day <= 5) { phase = "LA REGLA 🩸"; key = "period"; }
+  else if (day <= 13) { phase = "DIVA MODE ✨"; key = "follicular"; }
+  else if (day <= 16) { phase = "OVULACIÓN 🔥"; key = "ovulation"; }
+  else { phase = "DRAMAS (SPM) 💣"; key = "luteal"; }
 
   UI.phase.innerText = phase;
   
-  // Frase aleatoria
+  // Frase aleatoria (solo cambia al recargar para no marear)
   const list = PHRASES[key];
   UI.msg.innerText = list[Math.floor(Math.random() * list.length)];
 }
 
-function checkAndNotify(day) {
-  // Días en los que queremos aviso sí o sí
-  const triggerDays = [1, 6, 14, 18, 25];
-  
-  if (triggerDays.includes(day)) {
-      sendLocalNotification(`Día ${day}: ${UI.phase.innerText}`, UI.msg.innerText);
+// --- FUNCIONES DE ACCIÓN ---
+
+// 1. RESETEAR REGLA (El botón nuevo)
+function markPeriodToday() {
+  if(confirm("¿Te ha bajado hoy? Esto reiniciará el ciclo al día 1.")) {
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Recuperamos datos viejos para no perder el número de teléfono
+      let data = JSON.parse(localStorage.getItem('reinaData')) || { cycle: 28, phone: "" };
+      
+      // Actualizamos solo la fecha
+      data.date = today;
+      
+      localStorage.setItem('reinaData', JSON.stringify(data));
+      loadData(); // Recargar
+      alert("¡Ciclo actualizado, reina! Hoy es tu Día 1.");
   }
 }
 
-function sendLocalNotification(title, body) {
-  if (Notification.permission === "granted") {
-      new Notification("👑 AVISO DE LA REINA", {
-          body: body,
-          icon: "https://cdn-icons-png.flaticon.com/512/1946/1946429.png",
-          vibrate: [200, 100, 200]
-      });
-  }
-}
-
-// BOTONES
+// 2. ENVIAR WHATSAPP
 function notifyBoyfriend() {
   const data = JSON.parse(localStorage.getItem('reinaData'));
-  if (!data) return alert("Configura primero, reina.");
-  const text = `👑 COMUNICADO OFICIAL: Estoy en mi día ${UI.day.innerText} (${UI.phase.innerText}). Estado: ${UI.msg.innerText}. Actúa en consecuencia.`;
+  if(!data || !data.phone) return alert("Guarda primero el teléfono en ajustes.");
+  
+  const text = `👑 AVISO: Estoy en el día ${UI.day.innerText} (${UI.phase.innerText}). Estado: "${UI.msg.innerText}". Compórtate.`;
   window.open(`https://wa.me/${data.phone}?text=${encodeURIComponent(text)}`);
 }
 
+// 3. GUARDAR AJUSTES
 function saveSettings() {
   const date = document.getElementById('lastPeriod').value;
   const cycle = document.getElementById('cycleDays').value;
   const phone = document.getElementById('phone').value;
   
-  if (!date || !phone) return alert("Rellena todo.");
+  if(!date || !phone) return alert("Rellena todo, porfa.");
   
   const data = { date, cycle, phone };
   localStorage.setItem('reinaData', JSON.stringify(data));
+  closeSettings();
   loadData();
 }
 
 function openSettings() { UI.panel.classList.add('active'); }
-
-function testNotification() {
-  Notification.requestPermission().then(perm => {
-      if(perm === "granted") {
-          new Notification("👑 Prueba Exitosa", { body: "Así te avisaré, guapa." });
-      } else {
-          alert("Tienes las notificaciones bloqueadas en el móvil. Actívalas en ajustes.");
-      }
-  });
-}
+function closeSettings() { UI.panel.classList.remove('active'); }
