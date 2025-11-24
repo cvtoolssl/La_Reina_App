@@ -155,7 +155,7 @@ function sendNotification(title, body) {
       });
   } else {
       // Fallback clásico
-      new Notification("💖 ChoniCycle", {
+      new Notification("💖 ChochoCycle", {
           body: `${title}\n${body}`,
           icon: "https://cdn-icons-png.flaticon.com/512/2913/2913564.png", // Icono corazón
           vibrate: [200, 100, 200]
@@ -168,7 +168,7 @@ function notifyBoyfriend() {
   const saved = localStorage.getItem(STORAGE_KEY);
   if(!saved) return alert("Configura primero.");
   const data = JSON.parse(saved);
-  const text = `💖 ChoniCycle Informe:\nEstoy en el día ${UI.day.innerText} (${UI.phase.innerText}).\nMood: "${UI.msg.innerText}"\n\nCompórtate.`;
+  const text = `💖 ChochoCycle Informe:\nEstoy en el día ${UI.day.innerText} (${UI.phase.innerText}).\nMood: "${UI.msg.innerText}"\n\nCompórtate.`;
   window.open(`https://wa.me/${data.phone}?text=${encodeURIComponent(text)}`);
 }
 
