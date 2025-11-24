@@ -1,28 +1,28 @@
-// --- FRASES DIVAS ---
+// --- FRASES DIVERTIDAS (Más variedad) ---
 const PHRASES = {
   period: [
-      "🩸 Modo avión. No estoy para nadie.",
-      "✨ Alineando chakras desde la cama. Modo putón OFF",
-      "🧘‍♀️ Fluyendo con la marea. Tráeme chocolate churri.",
-      "🚫 Cerrado por limpieza de aura. Chocho cerrado"
+      "🩸 Alerta Roja: Si no traes chocolate, no entres.",
+      "🚫 Cerrado por mantenimiento. Disculpen las molestias.",
+      "👹 Hoy no soy yo, es mi útero hablando. Putón",
+      "🛌 Mi estado civil: En una relación con mi cama. Ni te arrimes"
   ],
   follicular: [
-      "🦋 Saliendo del capullo, guapa.",
-      "💅 Manifestando abundancia y pelazo. Putón a la vista",
-      "✨ Energía de Diosa Suprema.",
-      "🔋 Batería social al 100%. "
+      "✨ Te sientes la Beyoncé del barrio. Soy un putón berbenero",
+      "💅 Energía de 'Bad Bitch' activada.",
+      "🔋 Batería social al 100%. ¡A la calle!",
+      "🦋 Estás más guapa que un filtro de Instagram."
   ],
   ovulation: [
-      "🔥 Fertilidad a tope. Cuidado ahí. Apta para preñaje",
-      "👶 Universo fértil. Ojo con lo que deseas. ",
-      "🐆 Estás magnética. Consigues lo que quieras. Me voy de fiestuqui zorronas",
-      "💋 Labios rojos y ovarios trabajando. Susto total en el cuerpo"
+      "🔥 Peligro: Miras a un poste y te enamoras. ",
+      "👶 Fertilidad nivel: Solo con mirarme te embarazo. Hoy cochinadas no!",
+      "🐆 Estás para comerte. Literalmente. Soy un zorrón!",
+      "💋 Hoy atraes hasta el WiFi de los vecinos. Esto cachonda"
   ],
   luteal: [
-      "⛈️ Mercurio retrógrado en mi útero. No me molestres tronco",
-      "🔮 Intuición a tope, paciencia cero. Ni me mires. Mamón",
-      "🍫 Necesito mimos o un atraco a la nevera.",
-      "💣 Fase sensible. Si grito es normal."
+      "💣 Cuenta atrás para la explosión...",
+      "🍫 Dame comida y nadie saldrá herido.",
+      "😭 Lloro con los anuncios de detergente. Es normal.",
+      "🔪 Paciencia al 1%. No me pruebes."
   ]
 };
 
@@ -31,6 +31,7 @@ const UI = {
   phase: document.getElementById('phaseName'),
   msg: document.getElementById('dailyMessage'),
   panel: document.getElementById('settingsPanel'),
+  notifStatus: document.getElementById('notifStatus'),
   inputs: {
       date: document.getElementById('lastPeriod'),
       cycle: document.getElementById('cycleDays'),
@@ -38,25 +39,52 @@ const UI = {
   }
 };
 
-const STORAGE_KEY = 'choniCycle_v2';
+const STORAGE_KEY = 'choniCycle_v3';
 
-// --- INICIO ---
+// INICIO
 window.onload = () => {
+  // 1. Pedir permiso de notificación A SACO nada más entrar
+  if ("Notification" in window) {
+      Notification.requestPermission().then(permission => {
+          if (permission === "granted") {
+              UI.notifStatus.innerText = "🔔 Avisos activos";
+              checkDailyNotification(); // Comprobar ya
+          } else {
+              UI.notifStatus.innerText = "🔕 Avisos bloqueados (Actívalos en ajustes)";
+          }
+      });
+  }
+
+  // 2. Cargar datos
   const data = localStorage.getItem(STORAGE_KEY);
   if(data) {
       calculate(JSON.parse(data));
   } else {
       openSettings();
   }
+
+  // 3. Registrar Service Worker (Vital para APK)
+  if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+  }
 };
 
-// --- CÁLCULOS ---
+// COMPROBACIÓN RECURRENTE (Cada minuto intenta avisar)
+setInterval(() => {
+  const data = localStorage.getItem(STORAGE_KEY);
+  if(data) {
+      const parsed = JSON.parse(data);
+      // Recalcular día por si ha cambiado
+      calculate(parsed); 
+      checkDailyNotification();
+  }
+}, 60000); // Cada 60 segundos
+
 function calculate(data) {
   const last = new Date(data.date);
   const today = new Date();
   
-  // Validación básica
-  if(isNaN(last.getTime())) return openSettings();
+  if(isNaN(last.getTime())) return;
 
   const diffTime = Math.abs(today - last);
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
@@ -78,55 +106,61 @@ function updateUI(day) {
   else { phase = "Dramas / SPM 🔮"; key = "luteal"; }
 
   UI.phase.innerText = phase;
-  const list = PHRASES[key];
-  UI.msg.innerText = list[Math.floor(Math.random() * list.length)];
+  
+  // Guardar la fase actual en local para usarla en la notificación
+  localStorage.setItem('currentPhaseName', phase);
+  
+  // Elegir frase y guardarla para que no cambie al recargar el mismo día
+  const todayStr = new Date().toDateString();
+  const lastPhraseDate = localStorage.getItem('lastPhraseDate');
+  
+  if (lastPhraseDate !== todayStr) {
+      const list = PHRASES[key];
+      const randomPhrase = list[Math.floor(Math.random() * list.length)];
+      localStorage.setItem('dailyPhrase', randomPhrase);
+      localStorage.setItem('lastPhraseDate', todayStr);
+      UI.msg.innerText = randomPhrase;
+  } else {
+      UI.msg.innerText = localStorage.getItem('dailyPhrase');
+  }
 }
 
-// --- NUEVO ENFOQUE: CALENDARIO (.ICS) ---
-function addToCalendar() {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if(!saved) return alert("Configura tus fechas primero, reina.");
-  
-  const data = JSON.parse(saved);
-  const lastPeriod = new Date(data.date);
-  const cycleLen = parseInt(data.cycle);
-  
-  let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//ChoniCycle//NONSGML v1.0//EN\n";
-  
-  // Generar las próximas 6 reglas
-  for(let i = 0; i < 6; i++) {
-      // Calcular fecha estimada (última + (ciclo * veces))
-      // Si i=0 es la actual/pasada, empezamos en i=1 para la futura si la actual ya pasó
-      // Vamos a proyectar desde la última fecha guardada
-      let nextDate = new Date(lastPeriod);
-      nextDate.setDate(lastPeriod.getDate() + (cycleLen * (i + 1)));
-      
-      // Formato YYYYMMDD
-      const startStr = nextDate.toISOString().replace(/-|:|\.\d\d\d/g,"").substring(0,8);
-      
-      // Asumimos que dura 5 días la alerta
-      let endDate = new Date(nextDate);
-      endDate.setDate(nextDate.getDate() + 5);
-      const endStr = endDate.toISOString().replace(/-|:|\.\d\d\d/g,"").substring(0,8);
+// --- SISTEMA DE NOTIFICACIÓN DIARIA ---
+function checkDailyNotification() {
+  if (Notification.permission !== "granted") return;
 
-      icsContent += "BEGIN:VEVENT\n";
-      icsContent += `DTSTART;VALUE=DATE:${startStr}\n`;
-      icsContent += `DTEND;VALUE=DATE:${endStr}\n`;
-      icsContent += "SUMMARY:🩸 Alerta ChoniCycle\n";
-      icsContent += "DESCRIPTION:Prepárate chocolate y mimos.\n";
-      icsContent += "END:VEVENT\n";
+  const todayStr = new Date().toDateString();
+  const lastNotif = localStorage.getItem('lastNotificationSentDate');
+
+  // Si la fecha guardada es distinta a hoy, enviamos aviso
+  if (lastNotif !== todayStr) {
+      const day = UI.day.innerText;
+      const phase = localStorage.getItem('currentPhaseName') || "Ciclo";
+      const phrase = localStorage.getItem('dailyPhrase') || "Entra a ver qué pasa hoy.";
+
+      sendNotification(`Día ${day}: ${phase}`, phrase);
+      
+      // Marcamos hoy como "ya avisado"
+      localStorage.setItem('lastNotificationSentDate', todayStr);
   }
-  
-  icsContent += "END:VCALENDAR";
+}
 
-  // Crear archivo y descargar
-  const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-  const link = document.createElement('a');
-  link.href = window.URL.createObjectURL(blob);
-  link.setAttribute('download', 'mis_reglas.ics');
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+function sendNotification(title, body) {
+  // Intenta usar el Service Worker si está disponible (mejor para móviles)
+  if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({
+          type: 'NOTIFY',
+          title: title,
+          body: body
+      });
+  } else {
+      // Fallback clásico
+      new Notification("💖 ChoniCycle", {
+          body: `${title}\n${body}`,
+          icon: "https://cdn-icons-png.flaticon.com/512/2913/2913564.png", // Icono corazón
+          vibrate: [200, 100, 200]
+      });
+  }
 }
 
 // --- ACCIONES ---
@@ -134,7 +168,7 @@ function notifyBoyfriend() {
   const saved = localStorage.getItem(STORAGE_KEY);
   if(!saved) return alert("Configura primero.");
   const data = JSON.parse(saved);
-  const text = `💖 Hola. Update: Estoy en el día ${UI.day.innerText} (${UI.phase.innerText}). Mood: "${UI.msg.innerText}" Trátame bien.`;
+  const text = `💖 ChoniCycle Informe:\nEstoy en el día ${UI.day.innerText} (${UI.phase.innerText}).\nMood: "${UI.msg.innerText}"\n\nCompórtate.`;
   window.open(`https://wa.me/${data.phone}?text=${encodeURIComponent(text)}`);
 }
 
@@ -144,19 +178,19 @@ function markPeriodToday() {
       let currentData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || { cycle: 28, phone: "" };
       currentData.date = today;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData));
+      // Resetear notificación para que avise del cambio
+      localStorage.removeItem('lastNotificationSentDate'); 
       calculate(currentData);
-      alert("🩸 Ciclo reiniciado. Cuídate.");
+      alert("🩸 Ciclo reiniciado.");
   }
 }
 
-// --- GESTIÓN DE AJUSTES ---
+// --- AJUSTES ---
 function saveSettings() {
   const date = UI.inputs.date.value;
   const cycle = UI.inputs.cycle.value;
   const phone = UI.inputs.phone.value;
-
-  if(!date || !cycle || !phone) return alert("Rellena todo, porfi.");
-
+  if(!date || !cycle || !phone) return alert("Rellena todo.");
   const userData = { date, cycle, phone };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
   closeSettings();
@@ -177,8 +211,9 @@ function openSettings() {
 function closeSettings() { UI.panel.classList.remove('active'); }
 
 function fullReset() {
-  if(confirm("¿Seguro que quieres borrar todos los datos?")) {
+  if(confirm("¿Borrar todos los datos?")) {
       localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem('lastNotificationSentDate');
       location.reload();
   }
 }
