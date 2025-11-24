@@ -1,30 +1,31 @@
-// --- FRASES DIVERTIDAS (Más variedad) ---
+// --- FRASES DIVAS ---
 const PHRASES = {
   period: [
-      "🩸 Alerta Roja: Si no traes chocolate, no entres.",
-      "🚫 Cerrado por mantenimiento. Disculpen las molestias.",
-      "👹 Hoy no soy yo, es mi útero hablando. Putón",
-      "🛌 Mi estado civil: En una relación con mi cama. Ni te arrimes"
+      "🩸 Alerta Roja: Si no traes chocolate, no entres. Ni te arrimes",
+      "🚫 Chocho cerrado. Disculpen las molestias. ",
+      "👹 Hoy no soy yo, es mi útero hablando.",
+      "🛌 Mi estado civil: En una relación con mi cama. Tráeme chocolate ya!"
   ],
   follicular: [
-      "✨ Te sientes la Beyoncé del barrio. Soy un putón berbenero",
-      "💅 Energía de 'Bad Bitch' activada.",
-      "🔋 Batería social al 100%. ¡A la calle!",
-      "🦋 Estás más guapa que un filtro de Instagram."
+      "✨ Te sientes la Beyoncé del barrio. Súper Perri!!",
+      "💅 Energía de 'Bad Bitch' activada. Soy un putón!",
+      "🔋 Batería social al 100%. ¡A la calle! Al mamoneo se ha dicho",
+      "🦋 Estás más guapa que un filtro de Instagram. Zorronas al poder!"
   ],
   ovulation: [
-      "🔥 Peligro: Miras a un poste y te enamoras. ",
-      "👶 Fertilidad nivel: Solo con mirarme te embarazo. Hoy cochinadas no!",
-      "🐆 Estás para comerte. Literalmente. Soy un zorrón!",
-      "💋 Hoy atraes hasta el WiFi de los vecinos. Esto cachonda"
+      "🔥 Peligro: Miras a un poste y te enamoras.Soy una diva colega!",
+      "👶 Fertilidad nivel: Solo con mirarme te embarazo. Ya sabes... Ni te arrimes hoy",
+      "🐆 Estás para comerte. Literalmente. Churri I love You",
+      "💋 Hoy atraes hasta el WiFi de los vecinos. Soy un bicho zorrón"
   ],
   luteal: [
-      "💣 Cuenta atrás para la explosión...",
-      "🍫 Dame comida y nadie saldrá herido.",
-      "😭 Lloro con los anuncios de detergente. Es normal.",
-      "🔪 Paciencia al 1%. No me pruebes."
+      "💣 Cuenta atrás para la explosión... Ni me mires",
+      "🍫 Dame comida y nadie saldrá herido. Cuidao!",
+      "😭 Lloro con los anuncios de detergente. Es normal. Si me dices algo te rebiento",
+      "🔪 Paciencia al 1%. No me pruebes. Vete un par de días de casa"
   ]
 };
+
 
 const UI = {
   day: document.getElementById('dayNum'),
@@ -43,14 +44,14 @@ const STORAGE_KEY = 'choniCycle_v3';
 
 // INICIO
 window.onload = () => {
-  // 1. Pedir permiso de notificación A SACO nada más entrar
+  // 1. Pedir permiso de notificación
   if ("Notification" in window) {
       Notification.requestPermission().then(permission => {
           if (permission === "granted") {
               UI.notifStatus.innerText = "🔔 Avisos activos";
-              checkDailyNotification(); // Comprobar ya
+              checkDailyNotification();
           } else {
-              UI.notifStatus.innerText = "🔕 Avisos bloqueados (Actívalos en ajustes)";
+              UI.notifStatus.innerText = "🔕 Avisos bloqueados";
           }
       });
   }
@@ -63,22 +64,20 @@ window.onload = () => {
       openSettings();
   }
 
-  // 3. Registrar Service Worker (Vital para APK)
+  // 3. Registrar Service Worker
   if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js');
   }
 };
 
-// COMPROBACIÓN RECURRENTE (Cada minuto intenta avisar)
+// COMPROBACIÓN RECURRENTE
 setInterval(() => {
   const data = localStorage.getItem(STORAGE_KEY);
   if(data) {
-      const parsed = JSON.parse(data);
-      // Recalcular día por si ha cambiado
-      calculate(parsed); 
+      calculate(JSON.parse(data)); 
       checkDailyNotification();
   }
-}, 60000); // Cada 60 segundos
+}, 60000); 
 
 function calculate(data) {
   const last = new Date(data.date);
@@ -107,10 +106,8 @@ function updateUI(day) {
 
   UI.phase.innerText = phase;
   
-  // Guardar la fase actual en local para usarla en la notificación
   localStorage.setItem('currentPhaseName', phase);
   
-  // Elegir frase y guardarla para que no cambie al recargar el mismo día
   const todayStr = new Date().toDateString();
   const lastPhraseDate = localStorage.getItem('lastPhraseDate');
   
@@ -125,28 +122,24 @@ function updateUI(day) {
   }
 }
 
-// --- SISTEMA DE NOTIFICACIÓN DIARIA ---
+// --- NOTIFICACIONES ---
 function checkDailyNotification() {
   if (Notification.permission !== "granted") return;
 
   const todayStr = new Date().toDateString();
   const lastNotif = localStorage.getItem('lastNotificationSentDate');
 
-  // Si la fecha guardada es distinta a hoy, enviamos aviso
   if (lastNotif !== todayStr) {
       const day = UI.day.innerText;
       const phase = localStorage.getItem('currentPhaseName') || "Ciclo";
       const phrase = localStorage.getItem('dailyPhrase') || "Entra a ver qué pasa hoy.";
 
       sendNotification(`Día ${day}: ${phase}`, phrase);
-      
-      // Marcamos hoy como "ya avisado"
       localStorage.setItem('lastNotificationSentDate', todayStr);
   }
 }
 
 function sendNotification(title, body) {
-  // Intenta usar el Service Worker si está disponible (mejor para móviles)
   if (navigator.serviceWorker && navigator.serviceWorker.controller) {
       navigator.serviceWorker.controller.postMessage({
           type: 'NOTIFY',
@@ -154,22 +147,31 @@ function sendNotification(title, body) {
           body: body
       });
   } else {
-      // Fallback clásico
-      new Notification("💖 ChochoCycle", {
+      new Notification("💖 ChoniCycle", {
           body: `${title}\n${body}`,
-          icon: "https://cdn-icons-png.flaticon.com/512/2913/2913564.png", // Icono corazón
+          icon: "https://cdn-icons-png.flaticon.com/512/2913/2913564.png",
           vibrate: [200, 100, 200]
       });
   }
 }
 
-// --- ACCIONES ---
+// --- ACCIONES (WHATSAPP ARREGLADO) ---
 function notifyBoyfriend() {
   const saved = localStorage.getItem(STORAGE_KEY);
   if(!saved) return alert("Configura primero.");
   const data = JSON.parse(saved);
-  const text = `💖 ChochoCycle Informe:\nEstoy en el día ${UI.day.innerText} (${UI.phase.innerText}).\nMood: "${UI.msg.innerText}"\n\nCompórtate.`;
-  window.open(`https://wa.me/${data.phone}?text=${encodeURIComponent(text)}`);
+  
+  const day = UI.day.innerText;
+  const phase = UI.phase.innerText;
+  const msg = UI.msg.innerText;
+
+  // Texto limpio con emojis estándar
+  const text = `💖 ChoniCycle Informe:\n\nEstoy en el día ${day} (${phase}).\nMood: "${msg}"\n\nCompórtate.`;
+  
+  // Usamos api.whatsapp.com en lugar de wa.me porque maneja mejor la codificación
+  const url = `https://api.whatsapp.com/send?phone=${data.phone}&text=${encodeURIComponent(text)}`;
+  
+  window.open(url, '_blank');
 }
 
 function markPeriodToday() {
@@ -178,7 +180,6 @@ function markPeriodToday() {
       let currentData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || { cycle: 28, phone: "" };
       currentData.date = today;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData));
-      // Resetear notificación para que avise del cambio
       localStorage.removeItem('lastNotificationSentDate'); 
       calculate(currentData);
       alert("🩸 Ciclo reiniciado.");
