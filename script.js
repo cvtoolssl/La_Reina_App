@@ -1,31 +1,30 @@
-// --- FRASES DIVAS ---
+// --- FRASES CHOCHO CYCLE (VERSIÓN DIVERTIDA/INSULTANTE) ---
 const PHRASES = {
   period: [
-      "🩸 Alerta Roja: Si no traes chocolate, no entres. Ni te arrimes",
-      "🚫 Chocho cerrado. Disculpen las molestias. ",
-      "👹 Hoy no soy yo, es mi útero hablando.",
-      "🛌 Mi estado civil: En una relación con mi cama. Tráeme chocolate ya!"
+      "🩸 Ni me mires, cachoperri, que muerdo.",
+      "🚫 Cerrado por obras. Circula, zorrón.",
+      "👹 Mi útero está de fiesta rave y tú no estás invitada.",
+      "🍫 Trae chocolate o lárgate, pedazo de vaga."
   ],
   follicular: [
-      "✨ Te sientes la Beyoncé del barrio. Súper Perri!!",
-      "💅 Energía de 'Bad Bitch' activada. Soy un putón!",
-      "🔋 Batería social al 100%. ¡A la calle! Al mamoneo se ha dicho",
-      "🦋 Estás más guapa que un filtro de Instagram. Zorronas al poder!"
+      "✨ Estás hecha un putón verbenero, y lo sabes.",
+      "💅 Guapa no, lo siguiente. Arrasas, zorra.",
+      "🔋 Energía a tope para ser la reina del barrio.",
+      "🦋 Hoy brillas más que el highlighter, petarda."
   ],
   ovulation: [
-      "🔥 Peligro: Miras a un poste y te enamoras.Soy una diva colega!",
-      "👶 Fertilidad nivel: Solo con mirarme te embarazo. Ya sabes... Ni te arrimes hoy",
-      "🐆 Estás para comerte. Literalmente. Churri I love You",
-      "💋 Hoy atraes hasta el WiFi de los vecinos. Soy un bicho zorrón"
+      "🔥 ¡Alerta! Tienes el chocho haciendo palmas.",
+      "👶 Cierra las piernas, golfa, que te preñan con la mirada.",
+      "🐆 Estás para mojar pan. Literalmente.",
+      "💋 Vas provocando, lagarta. Disfrútalo."
   ],
   luteal: [
-      "💣 Cuenta atrás para la explosión... Ni me mires",
-      "🍫 Dame comida y nadie saldrá herido. Cuidao!",
-      "😭 Lloro con los anuncios de detergente. Es normal. Si me dices algo te rebiento",
-      "🔪 Paciencia al 1%. No me pruebes. Vete un par de días de casa"
+      "💣 Estoy hinchada como un globo, no me toques los cojones.",
+      "😭 Odio a la humanidad, especialmente a ti, cachoperri.",
+      "🔪 Tengo la mecha muy corta. Cuidado.",
+      "🔮 Estoy dramática y qué pasa. ¡Cállate!"
   ]
 };
-
 
 const UI = {
   day: document.getElementById('dayNum'),
@@ -40,18 +39,18 @@ const UI = {
   }
 };
 
-const STORAGE_KEY = 'choniCycle_v3';
+const STORAGE_KEY = 'chochoCycle_v1';
 
 // INICIO
 window.onload = () => {
-  // 1. Pedir permiso de notificación
+  // 1. Permisos
   if ("Notification" in window) {
-      Notification.requestPermission().then(permission => {
-          if (permission === "granted") {
-              UI.notifStatus.innerText = "🔔 Avisos activos";
+      Notification.requestPermission().then(perm => {
+          if (perm === "granted") {
+              UI.notifStatus.innerText = "🔔 Alertas: ACTIVAS";
               checkDailyNotification();
           } else {
-              UI.notifStatus.innerText = "🔕 Avisos bloqueados";
+              UI.notifStatus.innerText = "🔕 Alertas: BLOQUEADAS";
           }
       });
   }
@@ -64,13 +63,13 @@ window.onload = () => {
       openSettings();
   }
 
-  // 3. Registrar Service Worker
+  // 3. Service Worker
   if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js');
   }
 };
 
-// COMPROBACIÓN RECURRENTE
+// Chequeo constante por si dejas la app abierta
 setInterval(() => {
   const data = localStorage.getItem(STORAGE_KEY);
   if(data) {
@@ -108,6 +107,7 @@ function updateUI(day) {
   
   localStorage.setItem('currentPhaseName', phase);
   
+  // Gestión de frase diaria (para que no cambie cada vez que recargas)
   const todayStr = new Date().toDateString();
   const lastPhraseDate = localStorage.getItem('lastPhraseDate');
   
@@ -132,7 +132,7 @@ function checkDailyNotification() {
   if (lastNotif !== todayStr) {
       const day = UI.day.innerText;
       const phase = localStorage.getItem('currentPhaseName') || "Ciclo";
-      const phrase = localStorage.getItem('dailyPhrase') || "Entra a ver qué pasa hoy.";
+      const phrase = localStorage.getItem('dailyPhrase') || "Entra, petarda.";
 
       sendNotification(`Día ${day}: ${phase}`, phrase);
       localStorage.setItem('lastNotificationSentDate', todayStr);
@@ -147,35 +147,32 @@ function sendNotification(title, body) {
           body: body
       });
   } else {
-      new Notification("💖 ChochoCycle", {
+      new Notification("🍑 ChochoCycle", {
           body: `${title}\n${body}`,
-          icon: "https://cdn-icons-png.flaticon.com/512/2913/2913564.png",
+          icon: "https://cdn-icons-png.flaticon.com/512/3014/3014239.png", // Icono melocotón
           vibrate: [200, 100, 200]
       });
   }
 }
 
-// --- ACCIONES (WHATSAPP ARREGLADO) ---
+// --- WHATSAPP (SOLUCIONADO ICONOS RAROS) ---
 function notifyBoyfriend() {
   const saved = localStorage.getItem(STORAGE_KEY);
-  if(!saved) return alert("Configura primero.");
+  if(!saved) return alert("Configura primero, melón.");
   const data = JSON.parse(saved);
   
   const day = UI.day.innerText;
   const phase = UI.phase.innerText;
   const msg = UI.msg.innerText;
 
-  // Texto limpio con emojis estándar
-  const text = `💖 ChochoCycle Informe:\n\nEstoy en el día ${day} (${phase}).\nMood: "${msg}"\n\nCompórtate.`;
+  const text = `🍑 ChochoCycle Informe:\n\nEstoy en el día ${day} (${phase}).\nMood: "${msg}"\n\nCompórtate o cobras.`;
   
-  // Usamos api.whatsapp.com en lugar de wa.me porque maneja mejor la codificación
   const url = `https://api.whatsapp.com/send?phone=${data.phone}&text=${encodeURIComponent(text)}`;
-  
   window.open(url, '_blank');
 }
 
 function markPeriodToday() {
-  if(confirm("¿Te ha bajado hoy? Resetearé el ciclo al día 1.")) {
+  if(confirm("¿Te ha bajado hoy, zorrón?")) {
       const today = new Date().toISOString().split('T')[0];
       let currentData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || { cycle: 28, phone: "" };
       currentData.date = today;
@@ -191,7 +188,7 @@ function saveSettings() {
   const date = UI.inputs.date.value;
   const cycle = UI.inputs.cycle.value;
   const phone = UI.inputs.phone.value;
-  if(!date || !cycle || !phone) return alert("Rellena todo.");
+  if(!date || !cycle || !phone) return alert("Rellena todo, vaga.");
   const userData = { date, cycle, phone };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
   closeSettings();
@@ -212,7 +209,7 @@ function openSettings() {
 function closeSettings() { UI.panel.classList.remove('active'); }
 
 function fullReset() {
-  if(confirm("¿Borrar todos los datos?")) {
+  if(confirm("¿Borrar todo y empezar de cero?")) {
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem('lastNotificationSentDate');
       location.reload();

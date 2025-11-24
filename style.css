@@ -1,7 +1,7 @@
 :root {
     --pink-light: #ffe6f2;
-    --pink-hot: #ff00cc;
-    --pink-grad: #ff66cc;
+    --pink-hot: #ff0080;
+    --pink-grad: #ff3399;
     --text-dark: #4a0d36;
     --glass: rgba(255, 255, 255, 0.90);
 }
@@ -11,7 +11,7 @@
 body {
     margin: 0;
     font-family: 'Montserrat', sans-serif;
-    background: linear-gradient(180deg, #ff9a9e 0%, #fad0c4 100%);
+    background: linear-gradient(180deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
     height: 100vh;
     width: 100vw;
     overflow: hidden;
@@ -35,7 +35,7 @@ h1 {
 .cycle-ring {
     width: 190px; height: 190px; background: white;
     border-radius: 50%; display: flex; justify-content: center; align-items: center;
-    box-shadow: 0 8px 25px rgba(255, 0, 204, 0.25);
+    box-shadow: 0 8px 25px rgba(255, 0, 128, 0.25);
     border: 5px solid white; position: relative;
 }
 
@@ -44,7 +44,7 @@ h1 {
     top: -8px; left: -8px; right: -8px; bottom: -8px;
     border-radius: 50%;
     background: linear-gradient(45deg, var(--pink-hot), #ffeb3b, var(--pink-hot));
-    z-index: -1; animation: spin 5s linear infinite;
+    z-index: -1; animation: spin 6s linear infinite;
 }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
@@ -61,7 +61,7 @@ h1 {
     width: 100%; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     min-height: 70px; display: flex; align-items: center; justify-content: center;
 }
-#dailyMessage { margin: 0; font-style: italic; font-weight: 600; font-size: 0.9rem; }
+#dailyMessage { margin: 0; font-style: italic; font-weight: 600; font-size: 0.9rem; line-height: 1.4; }
 
 .controls { width: 100%; display: flex; flex-direction: column; gap: 12px; margin-bottom: 10px; }
 button {
