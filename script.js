@@ -147,7 +147,7 @@ function sendNotification(title, body) {
           body: body
       });
   } else {
-      new Notification("💖 ChoniCycle", {
+      new Notification("💖 ChochoCycle", {
           body: `${title}\n${body}`,
           icon: "https://cdn-icons-png.flaticon.com/512/2913/2913564.png",
           vibrate: [200, 100, 200]
@@ -166,7 +166,7 @@ function notifyBoyfriend() {
   const msg = UI.msg.innerText;
 
   // Texto limpio con emojis estándar
-  const text = `💖 ChoniCycle Informe:\n\nEstoy en el día ${day} (${phase}).\nMood: "${msg}"\n\nCompórtate.`;
+  const text = `💖 ChochoCycle Informe:\n\nEstoy en el día ${day} (${phase}).\nMood: "${msg}"\n\nCompórtate.`;
   
   // Usamos api.whatsapp.com en lugar de wa.me porque maneja mejor la codificación
   const url = `https://api.whatsapp.com/send?phone=${data.phone}&text=${encodeURIComponent(text)}`;
